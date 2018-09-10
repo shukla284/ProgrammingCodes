@@ -15,4 +15,4 @@ def checkSum(num,thr):
             setsum+=num[k] if checkbit(i,k) else 0
         cnt+=1 if setsum>=thr else 0
     return cnt
-print checkSum([1,2,3],4)
+print checkSum(list(map(int,raw_input().split(' '))),int(input("Enter the threshold ")))
