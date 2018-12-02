@@ -1,0 +1,64 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+struct e{
+	int i,j,k,q;
+};
+int n,q;
+vector<e> a;
+vector<int> seg;
+vector<int> ans;
+
+bool comp(const e &a,const e &b){
+	if (a.k==b.k) return a.i<b.i;
+	return a.k<b.k;
+}
+void build (int n,int l,int r){
+	if (l==r){
+		seg[n]=1;return;
+	}
+	int m=(l+r)>>1;
+	build(lc(n),l,m);
+	build(rc(n),m+1,r);
+	seg[n]=seg[lc(n)]+seg[rc(n)];
+}
+
+void update (int n,int idx,int l,int r){
+	if (l==r) {
+		seg[n]=1;return;
+	}
+	int m=(l+r)>>1;
+	update(lc(n),idx,l,m);
+	update(rc(n),idx,m+1,r);
+	seg[n]=seg[lc(n)]+seg[rc(n)];
+}
+int query (int n,int l,int r,int ql,int qr){
+	if (r<ql || l>qr) return 0;
+	if (l>=ql && r<=qr) return seg[n];
+	int m=(l+r)>>1;
+	int pl=query(lc(n),l,m,ql,qr);
+	int pr=query(rc(n),m+1,r,ql,qr);
+	return pl+pr;
+}
+
+int main(int argc,char** argv){
+	cin>>n;
+	seg.resize(3*n);
+	for (int x=0;x<n;x++) {
+		int i,j,k,q;cin>>k;
+		i=x+1;j=-1;q=-1;
+		a.pb(e{i,j,k,q});
+	}
+	cin>>q;ans.resize(q);
+	for (int j=0;j<q;j++){
+		int i,j,k,q;cin>>i>>j>>k;
+		q=j+1;a.pb(e{i,j,k,q});
+	}
+	sort(a.begin(),a.end(),comp);
+	build(1,1,n);
+	for (int z=1;z<a.size();z++){
+		if (a[z].q==-1) update(1,z,0,n);
+		else ans[a[z].q]=query(1,1,n,a[z].i,a[z].j); 
+	}
+	return 0;
+}
